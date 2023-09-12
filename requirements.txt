@@ -1,0 +1,3 @@
+pyzotero
+python-dateutil
+difflib
