@@ -24,7 +24,7 @@ class ItemExporter:
 """
 <reference>
     <title>
-        {all_authors} 
+        {all_authors}, 
         "{title}," {year}.
     </title>
     <url>
@@ -50,6 +50,9 @@ class ItemExporter:
         formated_authors = list([self.format_individual_author(a) for a in list_of_authors])
         if len(formated_authors)==1:
             return formated_authors[0]
+        elif len(formated_authors) == 2:
+            first, second = formated_authors
+            return "{} and {}".format(first, second)
         else:
             first_half = formated_authors[:-1]
             last_one = formated_authors[1]
