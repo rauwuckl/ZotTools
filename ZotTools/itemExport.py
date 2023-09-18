@@ -11,6 +11,13 @@ class ItemExporter:
     def __init__(self):
         pass
 
+    # to format the title of the publication we go throught the following list and take the first result with a devined name
+    journalNamePriorityList = [
+        'publicationTitle',
+        'conferenceName',
+        'proceedingsTitle'
+    ]
+
     def export(self, item_data):
         """
 
@@ -25,7 +32,7 @@ class ItemExporter:
 <reference>
     <title>
         {all_authors}, 
-        "{title}," {year}.
+        "{title},"{journal_long} {year}.
     </title>
     <url>
         {url}
@@ -33,14 +40,27 @@ class ItemExporter:
 </reference>
 """
         all_authors = self.format_all_authors(item_data['creators'])
-        title = item_data['title']
+        title = self.format_title(item_data)
         date =  parse_date( item_data['date'])
         year = date.year
         url = item_data['url']
-        formated = template.format(all_authors=all_authors, title=title, year=year, url=url)
+        journalformat = self.format_journal(item_data)
+        if journalformat is None:
+            journal_long= ""
+        else:
+            journal_long = " <i>{}<i>,".format(journalformat)
+
+        formated = template.format(all_authors=all_authors, title=title, year=year, url=url, journal_long=journal_long)
         return formated
 
 
+
+    def format_title(self, data):
+        title = data['title']
+        if data['itemType'] == 'book':
+            return title.title()
+        else:
+            return title.capitalize()
 
 
     def format_individual_author(self, author):
@@ -55,10 +75,18 @@ class ItemExporter:
             return "{} and {}".format(first, second)
         else:
             first_half = formated_authors[:-1]
-            last_one = formated_authors[1]
+            last_one = formated_authors[-1]
 
             return "{}, and {}".format(", ".join(first_half), last_one)
+        
 
+    def format_journal(self, data):
+        for field_name in self.journalNamePriorityList:
+            result = data.get(field_name, "")
+            if result != "":
+                return result
+            
+        return None
 
 
 def export_items_for_website(list_of_items):
