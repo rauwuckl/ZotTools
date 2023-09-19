@@ -48,7 +48,7 @@ class ItemExporter:
         if journalformat is None:
             journal_long= ""
         else:
-            journal_long = " <i>{}<i>,".format(journalformat)
+            journal_long = " <i>{}</i>,".format(journalformat)
 
         formated = template.format(all_authors=all_authors, title=title, year=year, url=url, journal_long=journal_long)
         return formated
@@ -91,7 +91,7 @@ class ItemExporter:
 
 def export_items_for_website(list_of_items):
     exporter = ItemExporter()
-    return "\n\n".join([exporter.export(item['data']) for item in list_of_items])
+    return "".join([exporter.export(item['data']) for item in list_of_items])
 
 
 def get_number_forsorting(item):
